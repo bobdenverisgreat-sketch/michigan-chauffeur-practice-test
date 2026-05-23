@@ -12,29 +12,36 @@
   .option { display: block; margin: 8px 0; text-align: left; }
   #result { margin-top: 20px; font-size: 18px; }
   #review { margin-top: 20px; text-align: left; font-size: 16px; }
+  #intro { margin-bottom: 20px; }
 </style>
 </head>
+
 <body>
 <div id="quizContainer">
   <h2>Michigan Chauffeur License Practice Quiz</h2>
-  <p>
-This unofficial Michigan chauffeur practice test contains 45 multiple-choice questions covering the material commonly found on the real Michigan chauffeur knowledge exam. The actual Michigan chauffeur test consists of 15 randomly selected questions, so not every question from this practice test will appear on the real exam.
-</p>
 
-<p>
-Some questions in this practice test are intentionally reworded or redundant to help reinforce important topics and improve retention.
-</p>
+  <div id="intro">
+    <p>
+      This unofficial Michigan chauffeur practice test contains 45 multiple-choice questions covering the material commonly found on the real Michigan chauffeur knowledge exam. The actual Michigan chauffeur test consists of 15 randomly selected questions, so not every question from this practice test will appear on the real exam.
+    </p>
 
-<p>
-At the end of the test, you’ll see your score percentage, which questions you answered incorrectly, and the correct answers for those questions.
-</p>
+    <p>
+      Some questions in this practice test are intentionally reworded or redundant to help reinforce important topics and improve retention.
+    </p>
 
-<p style="font-size:12px; color:gray;">
-Not affiliated with or endorsed by the Michigan Secretary of State. Verify current requirements using official Michigan SOS materials.
-</p>
-   <button id="nextBtn" style="display:none;">Next</button>
-  <button id="startBtn">Start Quiz</button>
-     <div id="quiz"></div>
+    <p>
+      At the end of the test, you’ll see your score percentage, which questions you answered incorrectly, and the correct answers for those questions.
+    </p>
+
+    <p style="font-size:12px; color:gray;">
+      Not affiliated with or endorsed by the Michigan Secretary of State. Verify current requirements using official Michigan SOS materials.
+    </p>
+
+    <button id="startBtn">Start Quiz</button>
+  </div>
+
+  <button id="nextBtn" style="display:none;">Next</button>
+  <div id="quiz"></div>
   <div id="result"></div>
   <div id="review"></div>
 </div>
@@ -90,25 +97,34 @@ const questions = [
 
 let shuffled, current = 0, score = 0;
 let incorrectAnswers = [];
+
 const quizDiv = document.getElementById('quiz');
 const nextBtn = document.getElementById('nextBtn');
 const startBtn = document.getElementById('startBtn');
 const resultDiv = document.getElementById('result');
 const reviewDiv = document.getElementById('review');
+const introDiv = document.getElementById('intro');
 
 function shuffle(array){ return array.sort(() => Math.random() - 0.5); }
 
 function startQuiz(){
   shuffled = shuffle([...questions]);
-  current = 0; score = 0; incorrectAnswers = [];
-  resultDiv.innerHTML=''; reviewDiv.innerHTML='';
-  startBtn.style.display='none'; nextBtn.style.display='inline';
+  current = 0;
+  score = 0;
+  incorrectAnswers = [];
+
+  resultDiv.innerHTML = '';
+  reviewDiv.innerHTML = '';
+  introDiv.style.display = 'none';
+  nextBtn.style.display = 'inline';
+
   showQuestion();
 }
 
 function showQuestion(){
   const q = shuffled[current];
   quizDiv.innerHTML = `<div class='question'>${current+1}. ${q.q}</div>`;
+
   q.options.forEach((opt,i)=>{
     quizDiv.innerHTML += `<label class='option'><input type='radio' name='opt' value='${i}'> ${opt}</label>`;
   });
@@ -116,26 +132,46 @@ function showQuestion(){
 
 function nextQuestion(){
   const sel = document.querySelector('input[name="opt"]:checked');
-  if(!sel){alert('Select an answer'); return;}
-  const chosen = parseInt(sel.value);
-  if(chosen===shuffled[current].answer){ score++; }
-  else {
-    incorrectAnswers.push({question: shuffled[current].q, correct: shuffled[current].options[shuffled[current].answer]});
+
+  if(!sel){
+    alert('Select an answer');
+    return;
   }
+
+  const chosen = parseInt(sel.value);
+
+  if(chosen === shuffled[current].answer){
+    score++;
+  } else {
+    incorrectAnswers.push({
+      question: shuffled[current].q,
+      correct: shuffled[current].options[shuffled[current].answer]
+    });
+  }
+
   current++;
-  if(current<shuffled.length){ showQuestion(); }
-  else finishQuiz();
+
+  if(current < shuffled.length){
+    showQuestion();
+  } else {
+    finishQuiz();
+  }
 }
 
 function finishQuiz(){
-  quizDiv.innerHTML=''; nextBtn.style.display='none'; startBtn.style.display='inline';
-  const percent = ((score/shuffled.length)*100).toFixed(1);
-  resultDiv.innerHTML=`You scored ${score}/${shuffled.length} (${percent}%)`;
-  if(incorrectAnswers.length>0){
+  quizDiv.innerHTML = '';
+  nextBtn.style.display = 'none';
+
+  const percent = ((score / shuffled.length) * 100).toFixed(1);
+  resultDiv.innerHTML = `You scored ${score}/${shuffled.length} (${percent}%)`;
+
+  if(incorrectAnswers.length > 0){
     let reviewHTML = '<h3>Questions You Missed:</h3><ul>';
+
     incorrectAnswers.forEach(item=>{
       reviewHTML += `<li><strong>${item.question}</strong><br>Correct Answer: ${item.correct}</li>`;
     });
+
     reviewHTML += '</ul>';
     reviewDiv.innerHTML = reviewHTML;
   } else {
@@ -143,11 +179,13 @@ function finishQuiz(){
   }
 }
 
-startBtn.onclick=startQuiz;
-nextBtn.onclick=nextQuestion;
+startBtn.onclick = startQuiz;
+nextBtn.onclick = nextQuestion;
 </script>
+
 <div style="font-size:12px; color:gray; text-align:center; margin-top:20px; padding:10px;">
-Unofficial Michigan chauffeur practice test. Not affiliated with the Michigan Secretary of State. Verify current requirements with official Michigan SOS materials.
-</div>  
+  Unofficial Michigan chauffeur practice test. Not affiliated with the Michigan Secretary of State. Verify current requirements with official Michigan SOS materials.
+</div>
+
 </body>
 </html>
