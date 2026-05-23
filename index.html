@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Michigan Chauffeur License Practice Quiz</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f5f5f5; text-align: center; }
+  #quizContainer { max-width: 700px; margin: 30px auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.2); }
+  button { margin-top: 15px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+  .question { font-weight: bold; margin-bottom: 10px; }
+  .option { display: block; margin: 8px 0; text-align: left; }
+  #result { margin-top: 20px; font-size: 18px; }
+  #review { margin-top: 20px; text-align: left; font-size: 16px; }
+</style>
+</head>
+<body>
+<div id="quizContainer">
+  <h2>Michigan Chauffeur License Practice Quiz</h2>
+  <div id="quiz"></div>
+  <button id="nextBtn" style="display:none;">Next</button>
+  <button id="startBtn">Start Quiz</button>
+  <div id="result"></div>
+  <div id="review"></div>
+</div>
+
+<script>
+const questions = [
+  {q:'What is the minimum age to obtain a chauffeur\'s license in Michigan?', options:['16 years old','17 years old','18 years old','21 years old'], answer:2},
+  {q:'How many feet before a turn must you signal?', options:['50 feet','75 feet','100 feet','150 feet'], answer:2},
+  {q:'What is the maximum speed limit when towing a trailer on a freeway with a 70 mph speed limit?', options:['55 mph','60 mph','65 mph','70 mph'], answer:1},
+  {q:'What is the maximum legal height for vehicles in Michigan?', options:['12 feet 6 inches','13 feet','13 feet 6 inches','14 feet 6 inches'], answer:2},
+  {q:'A vehicle with a GVWR over 5,000 pounds must not follow another vehicle closer than how many feet?', options:['300 feet','400 feet','500 feet','600 feet'], answer:2},
+  {q:'What is the best way to slow down a large vehicle on a downgrade?', options:['Use the brakes continuously','Downshift to a lower gear before starting down the hill','Coast in neutral','Use the parking brake'], answer:1},
+  {q:'If a load extends more than 4 feet beyond the rear, what must be displayed?', options:['Yellow flag 10 inches square during day, yellow light at night','Orange flag 8 inches square during day, orange light at night','Red flag or cloth at least 12 inches square during day, or red light at night','White flag 6 inches square during day, white light at night'], answer:2},
+  {q:'What is the maximum length for a single vehicle (not trailer)?', options:['35 feet','40 feet','45 feet','50 feet'], answer:1},
+  {q:'When parking near a stop sign or traffic signal, how far must you stay back?', options:['15 feet','20 feet','30 feet','50 feet'], answer:2},
+  {q:'What type of license is required to transport passengers for hire in Michigan?', options:['Standard Driver\'s License','Commercial Driver\'s License (CDL)','Chauffeur\'s License','Special Transport License'], answer:2},
+  {q:'When should warning devices be placed if your commercial vehicle is disabled on the road?', options:['Within 15 minutes','Within 30 minutes','Immediately','Within 1 hour'], answer:2},
+  {q:'Proper mirror placement on commercial vehicles requires:', options:['One rearview mirror on the driver\'s side only','One rearview mirror on the passenger side only','One outside rearview mirror on each side for vehicles with capacity of 1,000 pounds or more','Three mirrors total including one inside mirror'], answer:2},
+  {q:'On a curve, why should braking be avoided in large vehicles?', options:['It wastes fuel','It wears out the brake pads','It may cause a skid or lock the wheels','It makes passengers uncomfortable'], answer:2},
+  {q:'Vehicles over 10,000 pounds GVWR may require:', options:['A commercial driver\'s license','A chauffeur\'s license','Special insurance','Annual inspections only'], answer:1},
+  {q:'When entering a highway from a private road or alley, you must:', options:['Speed up to merge quickly','Honk your horn','Stop and yield the right-of-way to approaching traffic','Flash your lights'], answer:2},
+  {q:'What is the maximum legal width of a vehicle on Michigan roads?', options:['96 inches','98 inches','102 inches','108 inches'], answer:2},
+  {q:'To ensure proper reaction time, how far ahead should you scan the road?', options:['At least 8 seconds','At least 10 seconds','At least 12 seconds','At least 15 seconds'], answer:2},
+  {q:'What brake systems must function on commercial vehicles?', options:['Service brakes only','Parking brakes only','Service and parking brakes','Emergency brakes only'], answer:2},
+  {q:'When transporting hazardous materials, you must have:', options:['Special tires','Extra mirrors','Placards and endorsement','Two drivers'], answer:2},
+  {q:'Where should warning devices be placed around a disabled vehicle?', options:['50 feet in front and behind','100 feet in front of and behind the vehicle, and at the road\'s edge within 10 feet of the vehicle\'s front or rear end','200 feet in front and behind','Only at the rear of the vehicle'], answer:1},
+  {q:'What is the minimum tread depth for front tires of a commercial vehicle?', options:['2/32 inch','3/32 inch','4/32 inch','5/32 inch'], answer:2},
+  {q:'What vehicles require a chauffeur\'s license even for personal use?', options:['Any vehicle over 5,000 pounds GVWR','Any vehicle over 8,000 pounds GVWR','Any vehicle over 10,000 pounds GVWR','Any vehicle over 15,000 pounds GVWR'], answer:2},
+  {q:'When must headlights be used?', options:['30 minutes after sunset to 30 minutes before sunrise','1 hour after sunset to 1 hour before sunrise','Only when it is completely dark','At dusk and dawn only'], answer:0},
+  {q:'What is the stopping distance at 55 mph under ideal conditions?', options:['About 200 feet','About 250 feet','About 300 feet','About 350 feet'], answer:2},
+  {q:'What does a solid yellow line on your side of the road mean?', options:['Passing is allowed with caution','Passing is not allowed','Passing is only allowed in daylight','Slow down'], answer:1},
+  {q:'What is the legal blood alcohol content (BAC) limit for a commercial driver in Michigan?', options:['0.02%','0.04%','0.06%','0.08%'], answer:1},
+  {q:'When backing a vehicle, you should:', options:['Use only your mirrors','Honk continuously','Get out and check the area if unsure','Back up quickly'], answer:2},
+  {q:'If you experience a tire blowout, you should:', options:['Brake hard immediately','Grip the wheel, ease off gas, steer straight','Turn sharply to the shoulder','Accelerate to maintain control'], answer:1},
+  {q:'A driver must have a chauffeur license if operating a vehicle:', options:['Over 5,000 pounds','For hire or business','With more than 4 passengers','On the highway'], answer:1},
+  {q:'Before starting a trip, the driver must:', options:['Check the fuel only','Inspect brakes and tires','Wash the vehicle','Call dispatch'], answer:1},
+  {q:'What is the best way to prevent hydroplaning?', options:['Use cruise control','Slow down in wet conditions','Drive in the left lane','Increase tire pressure'], answer:1},
+  {q:'When is it legal to drive on the shoulder?', options:['When traffic is heavy','To pass slow vehicles','Only when directed by police or signs','Never'], answer:2},
+  {q:'A flashing red traffic signal means:', options:['Slow down and proceed','Stop, then proceed when safe','Yield to oncoming traffic','Speed limit is reduced'], answer:1},
+  {q:'How far should you stop from railroad tracks when required?', options:['10-25 feet','15-50 feet','20-60 feet','25-75 feet'], answer:1},
+  {q:'When driving through a work zone, you must:', options:['Maintain your speed','Honk to warn workers','Obey posted speed limits','Change lanes frequently'], answer:2},
+  {q:'Which of the following is true about seat belt use in commercial vehicles?', options:['Optional','Required by law','Only required on highways','Only required for passengers'], answer:1},
+  {q:'You must report a name or address change to the Secretary of State within:', options:['10 days','20 days','30 days','60 days'], answer:2},
+  {q:'If you see an emergency vehicle with lights flashing behind you, you must:', options:['Speed up to get out of the way','Stop immediately where you are','Pull over to the right and stop','Change to the left lane'], answer:2},
+  {q:'If your vehicle begins to skid, the first thing to do is:', options:['Brake hard','Steer toward the skid','Accelerate','Turn the wheel sharply'], answer:1},
+  {q:'A truck with gross weight of 10,000 pounds or more, traveling on a freeway with a maximum speed greater than 70 mph, must not travel faster than:', options:['55 mph','60 mph','65 mph','70 mph'], answer:2},
+  {q:'What is the best technique for maintaining control on a curve?', options:['Brake through the entire curve','Accelerate before entering the curve','Slow to a safe speed before entering the curve, then accelerate slightly through it','Maintain constant speed throughout'], answer:2},
+  {q:'How should you dry wet brakes after driving through deep water?', options:['Drive fast to air dry them','Slow down and then apply the brakes gently until they work properly again','Park and wait for them to dry','Pump the brakes rapidly'], answer:1},
+  {q:'What are blind spots?', options:['Areas where your vision is blurred','Areas to the side and rear that cannot be seen in the mirrors','Areas in front of the vehicle','Areas marked by signs'], answer:1},
+  {q:'How should you check blind spots?', options:['Rely only on mirrors','Use a rear camera only','Turn your head to check what the mirrors do not show','Honk before changing lanes'], answer:2},
+  {q:'When merging on a highway, what should you allow other drivers to do?', options:['Speed up to block you','Maintain their speed','Slow down or change lanes to avoid a crash','Honk at you'], answer:2}
+];
+
+let shuffled, current = 0, score = 0;
+let incorrectAnswers = [];
+const quizDiv = document.getElementById('quiz');
+const nextBtn = document.getElementById('nextBtn');
+const startBtn = document.getElementById('startBtn');
+const resultDiv = document.getElementById('result');
+const reviewDiv = document.getElementById('review');
+
+function shuffle(array){ return array.sort(() => Math.random() - 0.5); }
+
+function startQuiz(){
+  shuffled = shuffle([...questions]);
+  current = 0; score = 0; incorrectAnswers = [];
+  resultDiv.innerHTML=''; reviewDiv.innerHTML='';
+  startBtn.style.display='none'; nextBtn.style.display='inline';
+  showQuestion();
+}
+
+function showQuestion(){
+  const q = shuffled[current];
+  quizDiv.innerHTML = `<div class='question'>${current+1}. ${q.q}</div>`;
+  q.options.forEach((opt,i)=>{
+    quizDiv.innerHTML += `<label class='option'><input type='radio' name='opt' value='${i}'> ${opt}</label>`;
+  });
+}
+
+function nextQuestion(){
+  const sel = document.querySelector('input[name="opt"]:checked');
+  if(!sel){alert('Select an answer'); return;}
+  const chosen = parseInt(sel.value);
+  if(chosen===shuffled[current].answer){ score++; }
+  else {
+    incorrectAnswers.push({question: shuffled[current].q, correct: shuffled[current].options[shuffled[current].answer]});
+  }
+  current++;
+  if(current<shuffled.length){ showQuestion(); }
+  else finishQuiz();
+}
+
+function finishQuiz(){
+  quizDiv.innerHTML=''; nextBtn.style.display='none'; startBtn.style.display='inline';
+  const percent = ((score/shuffled.length)*100).toFixed(1);
+  resultDiv.innerHTML=`You scored ${score}/${shuffled.length} (${percent}%)`;
+  if(incorrectAnswers.length>0){
+    let reviewHTML = '<h3>Questions You Missed:</h3><ul>';
+    incorrectAnswers.forEach(item=>{
+      reviewHTML += `<li><strong>${item.question}</strong><br>Correct Answer: ${item.correct}</li>`;
+    });
+    reviewHTML += '</ul>';
+    reviewDiv.innerHTML = reviewHTML;
+  } else {
+    reviewDiv.innerHTML = '<h3>Perfect Score! You got all questions correct!</h3>';
+  }
+}
+
+startBtn.onclick=startQuiz;
+nextBtn.onclick=nextQuestion;
+</script>
+</body>
+</html>
